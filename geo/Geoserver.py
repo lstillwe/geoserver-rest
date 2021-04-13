@@ -579,18 +579,40 @@ class Geoserver:
         except Exception as e:
             return "Error:%s" % str(e)
 
-    def publish_featurestore_sqlview(self, name, store_name, sql, key_column=None, geom_name='geom', geom_type='Geometry', workspace=None):
+    def publish_featurestore_sqlview(
+        self,
+        name: str,
+        title: str,
+        store_name: str,
+        sql: str,
+        key_column: str,
+        geom_name: str = "geom",
+        geom_type: str = "Geometry",
+        workspace: Optional[str] = None,
+    ):
+        """
+        Parameters
+        ----------
+        name : str
+        title : str
+        store_name : str
+        sql : str
+        key_column : str
+        geom_name : str
+        geom_type : str
+        workspace : str, optional
+        """
         try:
             if workspace is None:
-                workspace = 'default'
+                workspace = "default"
             c = pycurl.Curl()
             layer_xml = """<featureType>
             <name>{0}</name>
             <enabled>true</enabled>
             <namespace>
-            <name>{5}</name>
+            <name>{7}</name>
             </namespace>
-            <title>{0}</title>
+            <title>{1}</title>
             <srs>EPSG:4326</srs>
             <metadata>
             <entry key="JDBC_VIRTUAL_TABLE">
@@ -600,17 +622,23 @@ class Geoserver:
             <escapeSql>true</escapeSql>
             <keyColumn>{2}</keyColumn>
             <geometry>
-            <name>{3}</name>
-            <type>{4}</type>
+            <name>{5}</name>
+            <type>{6}</type>
             <srid>4326</srid>
             </geometry>
             </virtualTable>
             </entry>
             </metadata>
-            </featureType>""".format(name, sql, key_column, geom_name, geom_type, workspace)
-            c.setopt(pycurl.USERPWD, self.username + ':' + self.password)
-            c.setopt(c.URL, '{0}/rest/workspaces/{1}/datastores/{2}/featuretypes'.format(
-                self.service_url, workspace, store_name))
+            </featureType>""".format(
+                name, sql, key_column, geom_name, geom_type, workspace
+            )
+            c.setopt(pycurl.USERPWD, self.username + ":" + self.password)
+            c.setopt(
+                c.URL,
+                "{}/rest/workspaces/{}/datastores/{}/featuretypes".format(
+                    self.service_url, workspace, store_name
+                ),
+            )
             c.setopt(pycurl.HTTPHEADER, ["Content-type: text/xml"])
             c.setopt(pycurl.POSTFIELDSIZE, len(layer_xml))
             c.setopt(pycurl.READFUNCTION, DataProvider(layer_xml).read_cb)
