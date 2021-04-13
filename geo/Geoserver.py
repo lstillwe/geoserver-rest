@@ -579,7 +579,6 @@ class Geoserver:
         except Exception as e:
             return "Error:%s" % str(e)
 
-<<<<<<< HEAD
     def publish_featurestore_sqlview(
         self,
         name: str,
@@ -603,37 +602,6 @@ class Geoserver:
         geom_type : str
         workspace : str, optional
         """
-=======
-    def publish_featurestore_withCQL(self, store_name, pg_table, cql, workspace=None):
-        """
-        Only user for postgis vector data
-        Adds a CQL filter
-        input parameters: specify the name of the table in the postgis database to be published, specify the store,workspace name, and  the Geoserver user name, password and URL
-        ... and CQL! :)
-        """
-        try:
-            if workspace is None:
-                workspace = 'default'
-
-            c = pycurl.Curl()
-            layer_xml = "<featureType><name>{0}</name><cqlFilter>{1}</cqlFilter></featureType>".format(
-                pg_table, cql)
-            c.setopt(pycurl.USERPWD, self.username + ':' + self.password)
-            # connecting with the specified store in geoserver
-            c.setopt(c.URL, '{0}/rest/workspaces/{1}/datastores/{2}/featuretypes'.format(
-                self.service_url, workspace, store_name))
-            c.setopt(pycurl.HTTPHEADER, ["Content-type: text/xml"])
-            c.setopt(pycurl.POSTFIELDSIZE, len(layer_xml))
-            c.setopt(pycurl.READFUNCTION, DataProvider(layer_xml).read_cb)
-            c.setopt(pycurl.POST, 1)
-            c.perform()
-            c.close()
-
-        except Exception as e:
-            return "Error:%s" % str(e)
-
-    def publish_featurestore_sqlview(self, name, store_name, sql, key_column=None, geom_name='geom', geom_type='Geometry', workspace=None):
->>>>>>> 201be4a572b0c672d4b55d564de42f99b09d304c
         try:
             if workspace is None:
                 workspace = "default"
