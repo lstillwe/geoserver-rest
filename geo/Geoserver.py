@@ -611,9 +611,9 @@ class Geoserver:
             <name>{0}</name>
             <enabled>true</enabled>
             <namespace>
-            <name>{7}</name>
+            <name>{5}</name>
             </namespace>
-            <title>{1}</title>
+            <title>{6}</title>
             <srs>EPSG:4326</srs>
             <metadata>
             <entry key="JDBC_VIRTUAL_TABLE">
@@ -623,15 +623,15 @@ class Geoserver:
             <escapeSql>true</escapeSql>
             <keyColumn>{2}</keyColumn>
             <geometry>
-            <name>{5}</name>
-            <type>{6}</type>
+            <name>{3}</name>
+            <type>{4}</type>
             <srid>4326</srid>
             </geometry>
             </virtualTable>
             </entry>
             </metadata>
             </featureType>""".format(
-                name, sql, key_column, geom_name, geom_type, workspace
+                name, sql, key_column, geom_name, geom_type, workspace, title
             )
             c.setopt(pycurl.USERPWD, self.username + ":" + self.password)
             c.setopt(
