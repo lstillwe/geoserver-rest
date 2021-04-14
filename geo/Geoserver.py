@@ -590,6 +590,7 @@ class Geoserver:
         key_column: str,
         geom_name: str = "geom",
         geom_type: str = "Geometry",
+        disabled_svcs: str = "WMS",
         workspace: Optional[str] = None,
     ):
         """
@@ -608,8 +609,8 @@ class Geoserver:
             if workspace is None:
                 workspace = "default"
             c = pycurl.Curl()
-            layer_xml = """<featureType><name>{0}</name><enabled>true</enabled><namespace><name>{5}</name></namespace><title>{6}</title><srs>EPSG:4326</srs><metadata><entry key="JDBC_VIRTUAL_TABLE"><virtualTable><name>{0}</name><sql>{1}</sql><escapeSql>true</escapeSql><keyColumn>{2}</keyColumn><geometry><name>{3}</name><type>{4}</type><srid>4326</srid></geometry></virtualTable></entry></metadata></featureType>""".format(
-                name, sql, key_column, geom_name, geom_type, workspace, title
+            layer_xml = """<featureType><name>{0}</name><enabled>true</enabled><namespace><name>{5}</name></namespace><title>{6}</title><disabledServices><string>{7}</string></disabledServices><srs>EPSG:4326</srs><metadata><entry key="JDBC_VIRTUAL_TABLE"><virtualTable><name>{0}</name><sql>{1}</sql><escapeSql>true</escapeSql><keyColumn>{2}</keyColumn><geometry><name>{3}</name><type>{4}</type><srid>4326</srid></geometry></virtualTable></entry></metadata></featureType>""".format(
+                name, sql, key_column, geom_name, geom_type, workspace, title, disabled_svcs
             )
             c.setopt(pycurl.USERPWD, self.username + ":" + self.password)
             c.setopt(
