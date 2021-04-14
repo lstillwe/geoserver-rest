@@ -5,6 +5,7 @@ import requests
 from .Style import coverage_style_xml, outline_only_xml, catagorize_xml, classified_xml
 from .Calculation_gdal import raster_value
 from .supports import prepare_zip_file
+from typing import Optional
 
 
 # call back class for read the data
