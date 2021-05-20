@@ -1065,18 +1065,18 @@ class Geoserver:
         try:
             url = '{0}/rest/workspaces/{1}/coveragestores/{2}/coverages/{3}.xml'.format(self.service_url, workspace, store, coverage)
             data = "<coverage><title>{0}</title></coverage>".format(title)
-            headers = {"content-type": "text/xml"}
-            r = requests.post(url, data, auth=(
+            headers = {"content-type": "application/xml"}
+            r = requests.put(url, data, auth=(
                 self.username, self.password), headers=headers)
 
             if r.status_code == 201:
-                return "{0} Workspace {1} created!".format(r.status_code, workspace)
+                return "{0} Coverage title {1} updated!".format(r.status_code, workspace)
 
             if r.status_code == 401:
-                raise Exception('The workspace already exist')
+                raise Exception('Cannot update coverage title')
 
             else:
-                raise Exception("The workspace can not be created")
+                raise Exception("Cannot update coverage title")
 
         except Exception as e:
             return 'Error: {}'.format(e)
