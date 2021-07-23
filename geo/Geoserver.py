@@ -460,6 +460,44 @@ class Geoserver:
         except Exception as e:
             return "Error:%s" % str(e)
 
+    def create_jndi_featurestore(self, store_name, workspace, overwrite=False):
+        """
+        Postgis store for connecting postgres with geoserver
+        After creating feature store, you need to publish it
+        Input parameters:specify the store name you want to be created, the postgis database parameters including host, port, database name, schema, user and password,
+        """
+        try:
+            c = pycurl.Curl()
+            # connect with geoserver
+            c.setopt(pycurl.USERPWD, self.username + ':' + self.password)
+            c.setopt(
+                c.URL, '{0}/rest/workspaces/{1}/datastores'.format(self.service_url, workspace))
+            c.setopt(pycurl.HTTPHEADER, ["Content-type: text/xml"])
+
+            # make the connection with postgis jndi service
+            database_connection = '<dataStore>'\
+                '<name>{0}</name>'\
+                '<type>PostGIS (JNDI)</type>'\
+                '<connectionParameters>'\
+                '<dbtype>postgis</dbtype>'\
+                '<jndiReferenceName>java:comp/env/jdbc/postgres</jndiReferenceName>'\
+                '<namespace>http://{1}</namespace>'\
+                '</connectionParameters>'\
+                '</dataStore>'.format(store_name, workspace)
+            c.setopt(pycurl.POSTFIELDSIZE, len(database_connection))
+            c.setopt(pycurl.READFUNCTION, DataProvider(
+                database_connection).read_cb)
+
+            if overwrite:
+                c.setopt(pycurl.PUT, 1)
+            else:
+                c.setopt(pycurl.POST, 1)
+            c.perform()
+            c.close()
+        except Exception as e:
+            return "Error:%s" % str(e)
+
+
     def create_datastore(self, name, path, workspace=None, overwrite=False):
         '''
         The path referes as path to,
